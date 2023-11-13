@@ -26,6 +26,3 @@ RUN rm -f environment.yml
 
 # Activate nlp environment
 RUN echo "conda activate nlp" >> ~/.bashrc
-
-# Set bash as default shell
-SHELL ["/bin/bash", "-c"]
