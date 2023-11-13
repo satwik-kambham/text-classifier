@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 # Install required apt packages
-RUN apt update && apt upgrade
+RUN apt update
 RUN apt install -y --no-install-recommends \
     git \
     ca-certificates \
