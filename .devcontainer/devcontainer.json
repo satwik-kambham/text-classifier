@@ -3,9 +3,4 @@
     "build": {
         "dockerfile": "../Dockerfile"
     },
-    "features": {
-        "ghcr.io/devcontainers/features/sshd:1": {
-            "version": "latest"
-        }
-    }
 }
