@@ -1,12 +1,12 @@
 import torch
 from torch.utils.data import DataLoader
-from lightning.pytorch import LightningDataModule
+import lightning as L
 from tokenizers import Tokenizer
 
-from dataset import TrecDataset
+from data.trec.dataset import TrecDataset
 
 
-class TrecDataModule(LightningDataModule):
+class TrecDataModule(L.LightningDataModule):
     def __init__(
         self,
         tokenizer_ckpt_path,
