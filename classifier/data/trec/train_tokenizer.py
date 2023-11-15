@@ -10,6 +10,7 @@ from datasets import load_dataset
 tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
 tokenizer.normalizer = normalizers.Sequence([StripAccents()])
 tokenizer.pre_tokenizer = pre_tokenizers.Sequence([Whitespace()])
+tokenizer.enable_padding(pad_id=3, pad_token="[PAD]")
 trainer = BpeTrainer(
     special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"],
     show_progress=True,
@@ -20,7 +21,7 @@ dataset = load_dataset("trec", split="train+test")
 
 def batch_iterator(batch_size=1000):
     for i in range(0, len(dataset), batch_size):
-        yield dataset[i : i + batch_size]["text"]
+        yield dataset[i: i + batch_size]["text"]
 
 
 tokenizer.train_from_iterator(

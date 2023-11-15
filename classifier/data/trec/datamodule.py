@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import DataLoader
 from lightning.pytorch import LightningDataModule
 from tokenizers import Tokenizer
@@ -25,10 +26,14 @@ class TrecDataModule(LightningDataModule):
         pass
 
     def collate_fn(self, batch):
-        # TODO: implement collate_fn
         text, coarse, fine = zip(*batch)
-        out = self.tokenizer.encode_batch(text)
-        return out
+        encodings = self.tokenizer.encode_batch(text)
+        ids = [encoding.ids for encoding in encodings]
+        return {
+            "input_ids": torch.tensor(ids),
+            "coarse": torch.tensor(coarse),
+            "fine": torch.tensor(fine),
+        }
 
     def train_dataloader(self):
         return DataLoader(
