@@ -11,10 +11,13 @@ class TrecDataModule(L.LightningDataModule):
         self,
         tokenizer_ckpt_path,
         batch_size=32,
+        num_workers=2,
+        **kwargs,
     ):
         super().__init__()
         self.tokenizer_ckpt_path = tokenizer_ckpt_path
         self.batch_size = batch_size
+        self.num_workers = num_workers
 
     def prepare_data(self):
         # download, tokenize, etc...
@@ -41,6 +44,7 @@ class TrecDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             shuffle=True,
             collate_fn=self.collate_fn,
+            num_workers=self.num_workers,
         )
 
     def val_dataloader(self):
@@ -48,6 +52,7 @@ class TrecDataModule(L.LightningDataModule):
             self.val_ds,
             batch_size=self.batch_size,
             collate_fn=self.collate_fn,
+            num_workers=self.num_workers,
         )
 
     def test_dataloader(self):
@@ -55,4 +60,5 @@ class TrecDataModule(L.LightningDataModule):
             self.val_ds,
             batch_size=self.batch_size,
             collate_fn=self.collate_fn,
+            num_workers=self.num_workers,
         )
