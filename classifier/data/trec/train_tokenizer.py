@@ -21,7 +21,7 @@ dataset = load_dataset("trec", split="train+test")
 
 def batch_iterator(batch_size=1000):
     for i in range(0, len(dataset), batch_size):
-        yield dataset[i: i + batch_size]["text"]
+        yield dataset[i : i + batch_size]["text"]
 
 
 tokenizer.train_from_iterator(

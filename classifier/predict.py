@@ -1,8 +1,9 @@
 import sys
 import torch
-
 from tokenizers import Tokenizer
+
 from model.lstm import LSTMClassifier
+from model.lstm_with_attention import LSTMWithAttentionClassifier
 
 COARSE_LABELS = [
     "ABBR (0): Abbreviation",
@@ -67,29 +68,52 @@ FINE_LABELS = [
 ]
 
 
-def load_ckpts(tokenizer_ckpt_path, model_ckpt_path):
+def load_ckpts(
+    model_name,
+    tokenizer_ckpt_path,
+    model_ckpt_path,
+):
     tokenizer = Tokenizer.from_file(tokenizer_ckpt_path)
-    model = LSTMClassifier.load_from_checkpoint(
-        model_ckpt_path,
-        map_location="cpu",
-    )
-    return tokenizer, model
+
+    if model_name == "lstm":
+        model = LSTMClassifier.load_from_checkpoint(
+            model_ckpt_path,
+            map_location="cpu",
+        )
+    elif model_name == "lstm_with_attention":
+        model = LSTMWithAttentionClassifier.load_from_checkpoint(
+            model_ckpt_path,
+            map_location="cpu",
+        )
+    else:
+        raise ValueError(f"Unknown model name: {model_name}")
+
+    return tokenizer, model, model_name
 
 
-def infer(text, tokenizer, model):
+def infer(text, tokenizer, model, model_name):
     encoding = tokenizer.encode(text)
     ids = torch.tensor([encoding.ids])
-    logits = model(ids)
+    if model_name == "lstm":
+        logits = model(ids)
+    elif model_name == "lstm_with_attention":
+        logits, _ = model(ids)
+    else:
+        raise ValueError(f"Unknown model name: {model_name}")
     label = logits.argmax(dim=1).item()
     return label
 
 
 if __name__ == "__main__":
-    tokenizer, model = load_ckpts(sys.argv[1], sys.argv[2])
+    tokenizer, model, model_name = load_ckpts(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+    )
     inp = ""
     while inp != "exit":
         inp = input("Enter text: ")
-        label = infer(inp, tokenizer, model)
+        label = infer(inp, tokenizer, model, model_name)
         if model.fine:
             print(FINE_LABELS[label])
         else:
