@@ -4,6 +4,7 @@ from tokenizers import Tokenizer
 
 from model.lstm import LSTMClassifier
 from model.lstm_with_attention import LSTMWithAttentionClassifier
+from model.transformer import TransformerClassifier
 
 COARSE_LABELS = [
     "ABBR (0): Abbreviation",
@@ -85,6 +86,11 @@ def load_ckpts(
             model_ckpt_path,
             map_location="cpu",
         )
+    elif model_name == "transformer":
+        model = TransformerClassifier.load_from_checkpoint(
+            model_ckpt_path,
+            map_location="cpu",
+        )
     else:
         raise ValueError(f"Unknown model name: {model_name}")
 
@@ -97,6 +103,8 @@ def infer(text, tokenizer, model, model_name):
     if model_name == "lstm":
         logits = model(ids)
     elif model_name == "lstm_with_attention":
+        logits, _ = model(ids)
+    elif model_name == "transformer":
         logits, _ = model(ids)
     else:
         raise ValueError(f"Unknown model name: {model_name}")
