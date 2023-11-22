@@ -8,6 +8,7 @@ from model.transformer import TransformerClassifier
 
 
 def train(model_name, tokenizer_ckpt_path):
+    L.seed_everything(42)
     if model_name == "lstm":
         hparams = {
             "model_name": "lstm",
